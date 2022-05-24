@@ -5,6 +5,7 @@ const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 var jwt = require('jsonwebtoken')
+const stripe=require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 app.use(cors())
 app.use(express.json())
@@ -45,7 +46,20 @@ async function run() {
       res.send(tool)
     })
 
-
+    app.post('/create-payment-intent', async(req,res)=>{
+      const {amount}=req.body
+      
+      const payAmount=amount*100
+      
+      const paymentIntent=await stripe.paymentIntents.create({
+        amount: payAmount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      })
+      res.send({
+        clientSecret: paymentIntent.client_secret,
+      });
+    })
     app.post('/review', async (req, res) => {
       const review = req.body
       
@@ -58,6 +72,22 @@ async function run() {
       const result=await orderCollection.insertOne(order)
       res.send(result)
     })
+
+
+    app.get('/order/:email', async(req,res)=>{
+      const email=req.params.email
+      const query={email: email}
+      const result=await orderCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    app.get('/payment/:id', async(req,res)=>{
+      const id=req.params.id
+      const query={_id:ObjectId(id)}
+      const tool=await orderCollection.findOne(query)
+      res.send(tool)
+    })
+    
   }
   finally {
 
