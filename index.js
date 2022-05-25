@@ -26,6 +26,7 @@ async function run() {
     const reviewCollection = client.db("manufacturers").collection('review')
     const orderCollection = client.db("manufacturers").collection('orders')
     const paymentCollection = client.db("manufacturers").collection('payments')
+    const userCollection = client.db("manufacturers").collection('users')
 
     app.get('/tools', async (req, res) => {
       const query = {}
@@ -91,17 +92,25 @@ async function run() {
     app.patch('/order/:id', async (req, res) => {
       const id = req.params.id
       const payment = req.body
+      console.log(payment)
       const filter = { _id: ObjectId(id) }
       const upadatedDoc = {
         $set: {
           paid: true,
-          transactonId: payment.transactonId
+          transactonId: payment.transactionId
         }
       }
       const updateOrder = await orderCollection.updateOne(filter, upadatedDoc)
       const payments=await paymentCollection.insertOne(payment)
       res.send(upadatedDoc)
 
+    })
+
+    app.delete('/tool/:id', async(req,res)=>{
+      const id =req.params.id
+      const query = { _id: ObjectId(id) }
+      const result=await orderCollection.deleteOne(query)
+      res.send(result)
     })
     
   }
