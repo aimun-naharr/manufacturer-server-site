@@ -88,11 +88,11 @@ async function run() {
       res.send(result)
     })
 
-    // app.get('/reviews', async(req,res)=>{
-    //   const query={}
-    //   const result =await reviewCollection.find(query).toArray()
-    //   res.send(result)
-    // })
+    app.get('/reviews', async(req,res)=>{
+      const query={}
+      const result =await reviewCollection.find(query).toArray()
+      res.send(result)
+    })
 
     app.post('/order', async (req, res) => {
       const order = req.body
