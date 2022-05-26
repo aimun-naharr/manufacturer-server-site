@@ -7,7 +7,14 @@ require('dotenv').config()
 var jwt = require('jsonwebtoken')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
-app.use(cors())
+// app.use(cors())
+// Middlewares
+const corsConfig = {
+  origin: true,
+  credentials: true,
+}
+app.use(cors(corsConfig))
+app.options('*', cors(corsConfig))
 app.use(express.json())
 
 app.get('/', (req, res) => {
@@ -81,7 +88,8 @@ async function run() {
     })
 
     app.get('/reviews', async(req,res)=>{
-      const result =await reviewCollection.find().toArray()
+      const query={}
+      const result =await reviewCollection.find(query).toArray()
       res.send(result)
     })
 
