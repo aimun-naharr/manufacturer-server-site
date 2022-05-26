@@ -66,7 +66,7 @@ async function run() {
     const paymentCollection = client.db("manufacturers").collection('payments')
     const userCollection = client.db("manufacturers").collection('users')
 
-    app.get('/tools', verifyJWT, async (req, res) => {
+    app.get('/tools',  async (req, res) => {
       const query = {}
       const tools = await toolsCollection.find(query).toArray()
       res.send(tools)
@@ -115,21 +115,19 @@ async function run() {
       res.send(result)
     })
 
-    app.get('/users', verifyJWT, async (req, res) => {
+    app.get('/users',  async (req, res) => {
       const users = await userCollection.find().toArray()
       res.send(users)
     })
-    app.get('/order/:email', verifyJWT, async (req, res) => {
+    app.get('/order/:email',  async (req, res) => {
       const email = req.params.email
-      const decodedEmail = req.decoded.email
-      if (decodedEmail === email) {
+      
+      
         const query = { email: email }
         const result = await orderCollection.find(query).toArray()
         res.send(result)
-      }
-      else {
-        return res.status(403).send({ message: 'forbidden access' })
-      }
+      
+      
     })
 
     app.get('/payment/:id', async (req, res) => {
@@ -199,7 +197,7 @@ async function run() {
       const isAdmin = user.role === 'admin'
       res.send({ admin: isAdmin })
     })
-    app.post('/product', verifyJWT, async(req,res)=>{
+    app.post('/product', async(req,res)=>{
       const tool=req.body
       console.log(tool)
       const result=await toolsCollection.insertOne(tool)
