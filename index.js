@@ -10,13 +10,27 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 // app.use(cors())
 // Middlewares
+// const corsConfig = {
+//   origin: true,
+//   credentials: true,
+// }
+// app.use(cors(corsConfig))
+// app.options('*', cors(corsConfig))
+// app.use(express.json())
+
 const corsConfig = {
-  origin: true,
+  origin: '*',
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
 }
 app.use(cors(corsConfig))
-app.options('*', cors(corsConfig))
+app.options("*", cors(corsConfig))
 app.use(express.json())
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,authorization")
+  next()
+})
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
