@@ -171,7 +171,7 @@ async function run() {
       const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET)
       res.send({ result, token })
     })
-    app.put('/user/admin/:email', async (req, res) => {
+    app.put('/user/admin/:email', verifyJWT, async (req, res) => {
       const email = req.params.email
       const requester = req.decoded.email
       const requesterAccount = await userCollection.find({ email: requester })
